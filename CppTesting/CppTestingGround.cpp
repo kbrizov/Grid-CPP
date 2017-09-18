@@ -18,7 +18,7 @@ int main()
 	Tile& start = grid[0][0];
 	Tile& end = grid[0][5];
 
-	auto& path = grid.findPathUsingDFS(start, end);
+	auto& path = grid.findPathUsingBFS(start, end);
 
 	for_each(path.cbegin(), path.cend(), [](const Tile* tile)
 	{

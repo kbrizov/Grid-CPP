@@ -46,7 +46,7 @@ std::vector<const Tile*> Grid::findPathUsingBFS(const Tile& start, const Tile& e
 	unordered_map<const Tile*, const Tile*> visited;
 	visited.insert(make_pair(&start, nullptr));
 
-	while (frontier.size() != 0)
+	while (!frontier.empty())
 	{
 		const Tile* current = frontier.front();
 		frontier.pop();
@@ -84,7 +84,7 @@ std::vector<const Tile*> Grid::findPathUsingDFS(const Tile& start, const Tile& e
 	unordered_map<const Tile*, const Tile*> visited;
 	visited.insert(make_pair(&start, nullptr));
 
-	while (frontier.size() != 0)
+	while (!frontier.empty())
 	{
 		const Tile* current = frontier.top();
 		frontier.pop();
