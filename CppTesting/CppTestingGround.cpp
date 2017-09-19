@@ -80,7 +80,6 @@ int main()
 	return 0;
 }
 
-
 //priority_queue <Tile*> test1;
 //
 //auto tileComparer = [](Tile* left, Tile* right) { return *left > *right; };
