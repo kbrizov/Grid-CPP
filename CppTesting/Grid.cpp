@@ -2,6 +2,7 @@
 #include <cassert>
 #include <queue>
 #include <stack>
+#include <unordered_set>
 #include <algorithm>
 
 Grid::Grid(int rows, int columns)
@@ -37,9 +38,9 @@ int Grid::getColumns() const
 	return this->columns;
 }
 
-std::vector<const Tile*> Grid::findPathUsingBFS(const Tile& start, const Tile& end)
+std::vector<const Tile*> Grid::findPathBFS(const Tile& start, const Tile& end) const
 {
-	// Find the path using BFS.
+	// BFS start.
 	queue<const Tile*> frontier;
 	frontier.push(&start);
 
@@ -67,17 +68,16 @@ std::vector<const Tile*> Grid::findPathUsingBFS(const Tile& start, const Tile& e
 				visited.insert(make_pair(tile, current));
 			}
 		}
-	}
+	} // BFS end.
 
-	// Return the path.
 	vector<const Tile*> path = this->getPathTo(end, visited);
 
 	return path;
 }
 
-std::vector<const Tile*> Grid::findPathUsingDFS(const Tile& start, const Tile& end)
+std::vector<const Tile*> Grid::findPathDFS(const Tile& start, const Tile& end) const
 {
-	// Find the path using DFS.
+	// DFS start.
 	stack<const Tile*> frontier;
 	frontier.push(&start);
 
@@ -105,12 +105,163 @@ std::vector<const Tile*> Grid::findPathUsingDFS(const Tile& start, const Tile& e
 				visited.insert(make_pair(tile, current));
 			}
 		}
-	}
+	} // DFS end.
 
-	// Return the path.
 	vector<const Tile*> path = this->getPathTo(end, visited);
 
 	return path;
+}
+
+std::vector<const Tile*> Grid::findPathDijkstra(const Tile& start, const Tile& end) const
+{
+	// Dijkstra start.
+	queue<const Tile*> frontier;
+	frontier.push(&start);
+
+	unordered_map<const Tile*, const Tile*> visited;
+	visited.insert(make_pair(&start, nullptr));
+
+	unordered_map<const Tile*, float> costs = this->getInitialCosts();
+	costs[&start] = 0.0f;
+
+	while (!frontier.empty())
+	{
+		const Tile* current = frontier.front();
+		frontier.pop();
+
+		if (*current == end)
+		{
+			break;
+		}
+
+		vector<const Tile*> neighbors = this->getTileNeighbors(*current);
+		priority_queue<const Tile*> prioritizedNeighbors = priority_queue<const Tile*>(neighbors.cbegin(), neighbors.cend());
+
+		while (!prioritizedNeighbors.empty())
+		{
+			const Tile* tile = prioritizedNeighbors.top();
+			prioritizedNeighbors.pop();
+
+			float oldCost = costs[tile];
+			float newCost = costs[current] + tile->getWeight();
+
+			bool isVisited = visited.count(tile) > 0;
+
+			if (newCost < oldCost)
+			{
+				costs[tile] = newCost;
+
+				// A cheaper path is found, so the tile predecesor must be replaced with the current tile.
+				if (isVisited)
+				{
+					visited[tile] = current;
+				}
+			}
+
+			if (!isVisited)
+			{
+				frontier.push(tile);
+				visited.insert(make_pair(tile, current));
+			}
+		}
+	} // Dijkstra end.
+
+	vector<const Tile*> path = this->getPathTo(end, visited);
+
+	return path;
+
+	//var frontier = new Queue<Node<TNode>>();
+	//frontier.Enqueue(start);
+
+	//var visitedNodes = new NodeDictionary<TNode>();
+	//visitedNodes.Add(start);
+
+	//var costs = InitializeCosts(graph);
+	//costs[start] = 0d;
+
+	//while (frontier.Count > 0)
+	//{
+	//	var currentNode = frontier.Dequeue();
+
+	//	if (currentNode.Equals(end))
+	//	{
+	//		break;
+	//	}
+
+	//	var prioritizedEdges = new PriorityQueue<Edge<TNode>>(currentNode.Edges);
+
+	//	while (prioritizedEdges.Count > 0)
+	//	{
+	//		var edge = prioritizedEdges.Dequeue();
+	//		var newCost = costs[currentNode] + edge.Weight;
+
+	//		if (newCost < costs[edge.Target])
+	//		{
+	//			costs[edge.Target] = newCost;
+
+	//			// A cheaper path is found, so the target node predecesor must be replaced with the current node.
+	//			if (visitedNodes.Contains(edge.Target))
+	//			{
+	//				visitedNodes[edge.Target] = currentNode;
+	//			}
+	//		}
+
+	//		if (!visitedNodes.Contains(edge.Target))
+	//		{
+	//			frontier.Enqueue(edge.Target);
+	//			visitedNodes.Add(edge.Target, currentNode);
+	//		}
+	//	}
+	//}
+
+	//var path = BacktrackPathTo(end, visitedNodes);
+
+	//return path;
+}
+
+std::unordered_map<const Tile*, float> Grid::dijkstraAlgorithm(const Tile& start)
+{
+	queue<const Tile*> frontier;
+	frontier.push(&start);
+
+	unordered_set<const Tile*> visited;
+	visited.insert(&start);
+
+	unordered_map<const Tile*, float> costs = this->getInitialCosts();
+	costs[&start] = 0.0f;
+
+	while (!frontier.empty())
+	{
+		const Tile* current = frontier.front();
+		frontier.pop();
+
+		vector<const Tile*> neighbors = this->getTileNeighbors(*current);
+		priority_queue<const Tile*> prioritizedNeighbors = priority_queue<const Tile*>(neighbors.cbegin(), neighbors.cend());
+
+		while (!prioritizedNeighbors.empty())
+		{
+			const Tile* tile = prioritizedNeighbors.top();
+			prioritizedNeighbors.pop();
+
+			float oldCost = costs[tile];
+			float newCost = costs[current] + tile->getWeight();
+
+			if (newCost < oldCost)
+			{
+				costs[tile] = newCost;
+			}
+
+			bool isVisited = visited.count(tile) > 0;
+
+			if (!isVisited)
+			{
+				frontier.push(tile);
+				visited.insert(tile);
+			}
+		}
+	}
+
+	return costs;
 }
 
 std::vector<const Tile*> Grid::getTileNeighbors(const Tile& tile) const
@@ -260,4 +411,19 @@ bool Grid::canGetTile(int row, int column) const
 	}
 
 	return true;
+}
+
+std::unordered_map<const Tile*, float> Grid::getInitialCosts() const
+{
+	unordered_map<const Tile*, float> costs;
+
+	for (int row = 0; row < this->rows; row++)
+	{
+		for (int column = 0; column < this->columns; column++)
+		{
+			costs.insert(make_pair(&grid[row][column], std::numeric_limits<float>::infinity()));
+		}
+	}
+
+	return costs;
 }

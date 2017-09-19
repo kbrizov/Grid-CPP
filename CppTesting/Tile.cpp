@@ -34,6 +34,13 @@ bool Tile::operator<(const Tile& other) const
 	return isLesser;
 }
 
+bool Tile::operator>(const Tile& other) const
+{
+	bool isGreater = this->weight > other.weight;
+
+	return isGreater;
+}
+
 std::string Tile::toString() const
 {
 	string result("(" + to_string(this->row) + ", " + to_string(this->column) + ")");

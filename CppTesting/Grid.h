@@ -19,9 +19,16 @@ public:
 
 	int getColumns() const;
 
-	vector<const Tile*> findPathUsingBFS(const Tile& start, const Tile& end);
+	/** Finds the shortest path from Start to End if it exists. */
+	vector<const Tile*> findPathBFS(const Tile& start, const Tile& end) const;
 
-	vector<const Tile*> findPathUsingDFS(const Tile& start, const Tile& end);
+	/** Finds a path from Start to End if it exists. */
+	vector<const Tile*> findPathDFS(const Tile& start, const Tile& end) const;
+
+	/** Finds the cheapest path from Start to End if it exists. */
+	vector<const Tile*> findPathDijkstra(const Tile& start, const Tile& end) const;
+
+	unordered_map<const Tile*, float> dijkstraAlgorithm(const Tile& start);
 
 	string toString() const;
 
@@ -38,6 +45,8 @@ private:
 	vector<const Tile*> getTileNeighbors(int row, int column) const;
 
 	bool canGetTile(int row, int column) const;
+
+	unordered_map<const Tile*, float> getInitialCosts() const;
 
 private:
 

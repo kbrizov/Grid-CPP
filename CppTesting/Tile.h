@@ -21,6 +21,8 @@ public:
 
 	bool operator<(const Tile& other) const;
 
+	bool operator>(const Tile& other) const;
+
 	bool operator==(const Tile& other) const;
 
 	string toString() const;
@@ -41,6 +43,20 @@ namespace std
 		{
 			int rowHash = hash<int>()(tile.getRow());
 			int columnHash = hash<int>()(tile.getColumn());
+
+			size_t tileHash = hash<int>()((rowHash << 1) ^ (columnHash >> 1));
+
+			return tileHash;
+		}
+	};
+
+	template<>
+	struct hash<const Tile*>
+	{
+		std::size_t operator()(const Tile* tile) const
+		{
+			int rowHash = hash<int>()(tile->getRow());
+			int columnHash = hash<int>()(tile->getColumn());
 
 			size_t tileHash = hash<int>()((rowHash << 1) ^ (columnHash >> 1));
 
