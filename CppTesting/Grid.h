@@ -19,14 +19,17 @@ public:
 
 	int getColumns() const;
 
-	/** Finds the shortest path from Start to End if it exists. */
+	/** Finds the shortest path from Start to End if it exists. Uses Breath first search. */
 	vector<const Tile*> findPathBFS(const Tile& start, const Tile& end) const;
 
-	/** Finds a path from Start to End if it exists. */
+	/** Finds a path from Start to End if it exists. Uses Depth first search */
 	vector<const Tile*> findPathDFS(const Tile& start, const Tile& end) const;
 
-	/** Finds the cheapest path from Start to End if it exists. */
+	/** Finds the cheapest path from Start to End if it exists. Uses Dijkstra's algorithm.*/
 	vector<const Tile*> findPathDijkstra(const Tile& start, const Tile& end) const;
+
+	/** Finds the cheapest path from Start to End if it exists. Uses A*. */
+	vector<const Tile*> findPathAStar(const Tile& start, const Tile& end) const;
 
 	unordered_map<const Tile*, float> dijkstraAlgorithm(const Tile& start);
 
@@ -43,6 +46,8 @@ private:
 	vector<const Tile*> getTileNeighbors(const Tile& tile) const;
 
 	vector<const Tile*> getTileNeighbors(int row, int column) const;
+
+	float getManhattanDistance(const Tile& a, const Tile& b) const;
 
 	bool canGetTile(int row, int column) const;
 

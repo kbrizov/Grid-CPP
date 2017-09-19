@@ -171,6 +171,78 @@ std::vector<const Tile*> Grid::findPathDijkstra(const Tile& start, const Tile& e
 	return path;
 }
 
+std::vector<const Tile*> Grid::findPathAStar(const Tile& start, const Tile& end) const
+{
+	// A* start.
+	queue<const Tile*> frontier;
+	frontier.push(&start);
+
+	unordered_map<const Tile*, const Tile*> visited;
+	visited.insert(make_pair(&start, nullptr));
+
+	unordered_map<const Tile*, float> costs = this->getInitialCosts();
+	costs[&start] = 0.0f;
+
+	while (!frontier.empty())
+	{
+		const Tile* current = frontier.front();
+		frontier.pop();
+
+		if (*current == end)
+		{
+			break;
+		}
+
+		auto heuristicComparer = [&](const Tile* left, const Tile* right) 
+		{
+			float leftHeuristic = left->getWeight() + getManhattanDistance(*left, end);
+			float rightHeuristic = right->getWeight() + getManhattanDistance(*right, end);
+
+			return leftHeuristic > rightHeuristic;
+		};
+
+		auto prioritizedNeighbors = priority_queue<const Tile*, vector<const Tile*>, decltype(heuristicComparer)>(heuristicComparer);
+		auto neighbors = this->getTileNeighbors(*current);
+
+		for (auto& item : neighbors)
+		{
+			prioritizedNeighbors.push(item);
+		}
+
+		while (!prioritizedNeighbors.empty())
+		{
+			const Tile* tile = prioritizedNeighbors.top();
+			prioritizedNeighbors.pop();
+
+			float oldCost = costs[tile];
+			float newCost = costs[current] + tile->getWeight();
+
+			bool isVisited = visited.count(tile) > 0;
+
+			if (newCost < oldCost)
+			{
+				costs[tile] = newCost;
+
+				// A cheaper path is found, so the tile predecesor must be replaced with the current tile.
+				if (isVisited)
+				{
+					visited[tile] = current;
+				}
+			}
+
+			if (!isVisited)
+			{
+				frontier.push(tile);
+				visited.insert(make_pair(tile, current));
+			}
+		}
+	} // A* end.
+
+	vector<const Tile*> path = this->getPathTo(end, visited);
+
+	return path;
+}
+
 std::unordered_map<const Tile*, float> Grid::dijkstraAlgorithm(const Tile& start)
 {
 	queue<const Tile*> frontier;
@@ -283,6 +355,18 @@ std::vector<const Tile*> Grid::getTileNeighbors(int row, int column) const
 	//}
 
 	return neighbors;
+}
+
+float Grid::getManhattanDistance(const Tile& a, const Tile& b) const
+{
+	float aRow = static_cast<float>(a.getRow());
+	float bRow = static_cast<float>(b.getRow());
+	float aColomn = static_cast<float>(a.getColumn());
+	float bColumn = static_cast<float>(b.getColumn());
+
+	float manhattanDistance = fabs(aRow - bRow) + fabs(aColomn - bColumn);
+
+	return manhattanDistance;
 }
 
 std::string Grid::toString() const

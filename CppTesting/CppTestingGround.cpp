@@ -9,11 +9,8 @@
 
 using namespace std;
 
-int main()
+void PrintDijkstraAlgorithm(Grid& grid)
 {
-	Grid grid = Grid(5, 5);
-	cout << grid.toString() << endl;
-
 	auto costs = grid.dijkstraAlgorithm(grid[2][2]);
 
 	for (int row = 0; row < grid.getRows(); row++)
@@ -25,24 +22,60 @@ int main()
 
 		cout << endl;
 	}
+}
 
-	cout << endl << "Cheapest path" << endl;
+void PrintPathBFS(Grid& grid, Tile& start, Tile& end)
+{
+	auto shortestPath = grid.findPathBFS(start, end);
 
-	auto cheapestPath = grid.findPathDijkstra(grid[0][0], grid[4][4]);
+	cout << endl << "BFS path" << endl;
+	for_each(shortestPath.cbegin(), shortestPath.cend(), [](const Tile* tile)
+	{
+		cout << tile->toString() << " ";
+	});
 
+	cout << endl;
+}
+
+void PrintPathDijkstra(Grid& grid, Tile& start, Tile& end)
+{
+	auto cheapestPath = grid.findPathDijkstra(start, end);
+
+	cout << endl << "Dijkstra path" << endl;
 	for_each(cheapestPath.cbegin(), cheapestPath.cend(), [](const Tile* tile)
 	{
 		cout << tile->toString() << " ";
 	});
 
-	cout << endl << "Shortest path" << endl;
+	cout << endl;
+}
 
-	auto shortestPath = grid.findPathBFS(grid[0][0], grid[4][4]);
+void PrintPathAStar(Grid& grid, Tile& start, Tile& end)
+{
+	auto cheapestPath = grid.findPathAStar(start, end);
 
-	for_each(shortestPath.cbegin(), shortestPath.cend(), [](const Tile* tile)
+	cout << endl << "A* path" << endl;
+	for_each(cheapestPath.cbegin(), cheapestPath.cend(), [](const Tile* tile)
 	{
 		cout << tile->toString() << " ";
 	});
+	
+	cout << endl;
+}
+
+int main()
+{
+	Grid grid = Grid(5, 5);
+
+	Tile& start = grid[0][0];
+	Tile& end = grid[3][3];
+
+	cout << grid.toString() << endl;
+
+	PrintDijkstraAlgorithm(grid);
+	PrintPathBFS(grid, start, end);
+	PrintPathDijkstra(grid, start, end);
+	PrintPathAStar(grid, start, end);
 
 	return 0;
 }
