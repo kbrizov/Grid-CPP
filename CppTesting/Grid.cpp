@@ -169,54 +169,6 @@ std::vector<const Tile*> Grid::findPathDijkstra(const Tile& start, const Tile& e
 	vector<const Tile*> path = this->getPathTo(end, visited);
 
 	return path;
-
-	//var frontier = new Queue<Node<TNode>>();
-	//frontier.Enqueue(start);
-
-	//var visitedNodes = new NodeDictionary<TNode>();
-	//visitedNodes.Add(start);
-
-	//var costs = InitializeCosts(graph);
-	//costs[start] = 0d;
-
-	//while (frontier.Count > 0)
-	//{
-	//	var currentNode = frontier.Dequeue();
-
-	//	if (currentNode.Equals(end))
-	//	{
-	//		break;
-	//	}
-
-	//	var prioritizedEdges = new PriorityQueue<Edge<TNode>>(currentNode.Edges);
-
-	//	while (prioritizedEdges.Count > 0)
-	//	{
-	//		var edge = prioritizedEdges.Dequeue();
-	//		var newCost = costs[currentNode] + edge.Weight;
-
-	//		if (newCost < costs[edge.Target])
-	//		{
-	//			costs[edge.Target] = newCost;
-
-	//			// A cheaper path is found, so the target node predecesor must be replaced with the current node.
-	//			if (visitedNodes.Contains(edge.Target))
-	//			{
-	//				visitedNodes[edge.Target] = currentNode;
-	//			}
-	//		}
-
-	//		if (!visitedNodes.Contains(edge.Target))
-	//		{
-	//			frontier.Enqueue(edge.Target);
-	//			visitedNodes.Add(edge.Target, currentNode);
-	//		}
-	//	}
-	//}
-
-	//var path = BacktrackPathTo(end, visitedNodes);
-
-	//return path;
 }
 
 std::unordered_map<const Tile*, float> Grid::dijkstraAlgorithm(const Tile& start)
