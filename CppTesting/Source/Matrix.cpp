@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Matrix.h"
 
 Matrix::Matrix(int rows, int columns, int value)

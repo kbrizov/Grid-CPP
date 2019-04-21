@@ -1,11 +1,7 @@
 #include <iostream>
+#include <algorithm>
 #include "Grid.h"
 #include "Tile.h"
-#include <set>
-#include <vector>
-#include <unordered_set>
-#include <queue>
-#include <algorithm>
 
 using namespace std;
 
