@@ -49,9 +49,13 @@ private:
 
 	float getManhattanDistance(const Tile& a, const Tile& b) const;
 
+	unordered_map<const Tile*, float> getInitialCosts() const;
+
 	bool canGetTile(int row, int column) const;
 
-	unordered_map<const Tile*, float> getInitialCosts() const;
+	bool isRowInRange(int row) const;
+
+	bool isColumnInRange(int columnt) const;
 
 private:
 

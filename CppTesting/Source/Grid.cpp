@@ -40,6 +40,9 @@ int Grid::getColumns() const
 
 std::vector<const Tile*> Grid::findPathBFS(const Tile& start, const Tile& end) const
 {
+	assert(&start != nullptr);
+	assert(&end != nullptr);
+
 	// BFS start.
 	queue<const Tile*> frontier;
 	frontier.push(&start);
@@ -77,6 +80,9 @@ std::vector<const Tile*> Grid::findPathBFS(const Tile& start, const Tile& end) c
 
 std::vector<const Tile*> Grid::findPathDFS(const Tile& start, const Tile& end) const
 {
+	assert(&start != nullptr);
+	assert(&end != nullptr);
+
 	// DFS start.
 	stack<const Tile*> frontier;
 	frontier.push(&start);
@@ -114,6 +120,9 @@ std::vector<const Tile*> Grid::findPathDFS(const Tile& start, const Tile& end) c
 
 std::vector<const Tile*> Grid::findPathDijkstra(const Tile& start, const Tile& end) const
 {
+	assert(&start != nullptr);
+	assert(&end != nullptr);
+
 	// Dijkstra start.
 	queue<const Tile*> frontier;
 	frontier.push(&start);
@@ -142,12 +151,12 @@ std::vector<const Tile*> Grid::findPathDijkstra(const Tile& start, const Tile& e
 			const Tile* tile = prioritizedNeighbors.top();
 			prioritizedNeighbors.pop();
 
-			float oldCost = costs[tile];
+			float currentCost = costs[tile];
 			float newCost = costs[current] + tile->getWeight();
 
 			bool isVisited = visited.count(tile) > 0;
 
-			if (newCost < oldCost)
+			if (newCost < currentCost)
 			{
 				costs[tile] = newCost;
 
@@ -173,6 +182,9 @@ std::vector<const Tile*> Grid::findPathDijkstra(const Tile& start, const Tile& e
 
 std::vector<const Tile*> Grid::findPathAStar(const Tile& start, const Tile& end) const
 {
+	assert(&start != nullptr);
+	assert(&end != nullptr);
+
 	// A* start.
 	queue<const Tile*> frontier;
 	frontier.push(&start);
@@ -214,12 +226,12 @@ std::vector<const Tile*> Grid::findPathAStar(const Tile& start, const Tile& end)
 			const Tile* tile = prioritizedNeighbors.top();
 			prioritizedNeighbors.pop();
 
-			float oldCost = costs[tile];
+			float currentCost = costs[tile];
 			float newCost = costs[current] + tile->getWeight();
 
 			bool isVisited = visited.count(tile) > 0;
 
-			if (newCost < oldCost)
+			if (newCost < currentCost)
 			{
 				costs[tile] = newCost;
 
@@ -245,6 +257,8 @@ std::vector<const Tile*> Grid::findPathAStar(const Tile& start, const Tile& end)
 
 std::unordered_map<const Tile*, float> Grid::dijkstraAlgorithm(const Tile& start)
 {
+	assert(&start != nullptr);
+
 	queue<const Tile*> frontier;
 	frontier.push(&start);
 
@@ -290,11 +304,16 @@ std::unordered_map<const Tile*, float> Grid::dijkstraAlgorithm(const Tile& start
 
 std::vector<const Tile*> Grid::getTileNeighbors(const Tile& tile) const
 {
+	assert(&tile != nullptr);
+
 	return this->getTileNeighbors(tile.getRow(), tile.getColumn());
 }
 
 std::vector<const Tile*> Grid::getTileNeighbors(int row, int column) const
 {
+	assert(isRowInRange(row));
+	assert(isColumnInRange(column));
+
 	vector<const Tile*> neighbors;
 
 	bool canGetUpperNeighbor = this->canGetTile(row - 1, column);
@@ -359,9 +378,13 @@ std::vector<const Tile*> Grid::getTileNeighbors(int row, int column) const
 
 float Grid::getManhattanDistance(const Tile& a, const Tile& b) const
 {
+	assert(&a != nullptr);
+	assert(&b != nullptr);
+
 	float aRow = static_cast<float>(a.getRow());
-	float bRow = static_cast<float>(b.getRow());
 	float aColomn = static_cast<float>(a.getColumn());
+
+	float bRow = static_cast<float>(b.getRow());
 	float bColumn = static_cast<float>(b.getColumn());
 
 	float manhattanDistance = fabs(aRow - bRow) + fabs(aColomn - bColumn);
@@ -402,6 +425,9 @@ void Grid::setColumns(int columns)
 
 std::vector<const Tile*> Grid::getPathTo(const Tile& end, const unordered_map<const Tile*, const Tile*>& visited) const
 {
+	assert(&end != nullptr);
+	assert(visited.size() > 0);
+
 	vector<const Tile*> path;
 
 	const Tile* current = nullptr;
@@ -430,25 +456,6 @@ std::vector<const Tile*> Grid::getPathTo(const Tile& end, const unordered_map<co
 	return path;
 }
 
-bool Grid::canGetTile(int row, int column) const
-{
-	int minIndex = 0;
-	int maxRowIndex = this->rows - 1;
-	int maxColumnIndex = this->columns - 1;
-
-	if (row < minIndex || row > maxRowIndex)
-	{
-		return false;
-	}
-
-	if (column < minIndex || column > maxColumnIndex)
-	{
-		return false;
-	}
-
-	return true;
-}
-
 std::unordered_map<const Tile*, float> Grid::getInitialCosts() const
 {
 	unordered_map<const Tile*, float> costs;
@@ -462,4 +469,25 @@ std::unordered_map<const Tile*, float> Grid::getInitialCosts() const
 	}
 
 	return costs;
+}
+
+bool Grid::canGetTile(int row, int column) const
+{
+	bool isInRange = isRowInRange(row) && isColumnInRange(column);
+
+	return isInRange;
+}
+
+bool Grid::isRowInRange(int row) const
+{
+	bool isInRange = (0 <= row && row < rows);
+
+	return isInRange;
+}
+
+bool Grid::isColumnInRange(int column) const
+{
+	bool isInRange = (0 <= column && column < columns);
+
+	return isInRange;
 }
