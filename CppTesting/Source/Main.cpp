@@ -35,7 +35,7 @@ void PrintPathBFS(Grid& grid, Tile& start, Tile& end)
 
 void PrintPathDijkstra(Grid& grid, Tile& start, Tile& end)
 {
-	auto cheapestPath = grid.findPathDijkstra(start, end);
+	auto cheapestPath = grid.findPathUCS(start, end);
 
 	cout << endl << "Dijkstra path" << endl;
 	for_each(cheapestPath.cbegin(), cheapestPath.cend(), [](const Tile* tile)

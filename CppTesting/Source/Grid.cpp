@@ -118,24 +118,32 @@ std::vector<const Tile*> Grid::findPathDFS(const Tile& start, const Tile& end) c
 	return path;
 }
 
-std::vector<const Tile*> Grid::findPathDijkstra(const Tile& start, const Tile& end) const
+std::vector<const Tile*> Grid::findPathUCS(const Tile& start, const Tile& end) const
 {
 	assert(&start != nullptr);
 	assert(&end != nullptr);
 
-	// Dijkstra start.
-	queue<const Tile*> frontier;
+	// UCS start.
+	auto costs = this->getInitialCosts();
+	costs[&start] = 0.0f;
+
+	auto heuristicComparer = [&](const Tile* lhs, const Tile* rhs)
+	{
+		float lhsPriority = costs[lhs];
+		float rhsPriority = costs[rhs];
+
+		return lhsPriority > rhsPriority;
+	};
+
+	auto frontier = priority_queue<const Tile*, vector<const Tile*>, decltype(heuristicComparer)>(heuristicComparer);
 	frontier.push(&start);
 
-	unordered_map<const Tile*, const Tile*> visited;
+	auto visited = unordered_map<const Tile*, const Tile*>();
 	visited.insert(make_pair(&start, nullptr));
-
-	unordered_map<const Tile*, float> costs = this->getInitialCosts();
-	costs[&start] = 0.0f;
 
 	while (!frontier.empty())
 	{
-		const Tile* current = frontier.front();
+		const Tile* current = frontier.top();
 		frontier.pop();
 
 		if (*current == end)
@@ -144,13 +152,8 @@ std::vector<const Tile*> Grid::findPathDijkstra(const Tile& start, const Tile& e
 		}
 
 		vector<const Tile*> neighbors = this->getTileNeighbors(*current);
-		priority_queue<const Tile*> prioritizedNeighbors = priority_queue<const Tile*>(neighbors.cbegin(), neighbors.cend());
-
-		while (!prioritizedNeighbors.empty())
+		for (auto& tile : neighbors)
 		{
-			const Tile* tile = prioritizedNeighbors.top();
-			prioritizedNeighbors.pop();
-
 			float currentCost = costs[tile];
 			float newCost = costs[current] + tile->getWeight();
 
@@ -173,7 +176,7 @@ std::vector<const Tile*> Grid::findPathDijkstra(const Tile& start, const Tile& e
 				visited.insert(make_pair(tile, current));
 			}
 		}
-	} // Dijkstra end.
+	} // UCS end.
 
 	vector<const Tile*> path = this->getPathTo(end, visited);
 
@@ -186,18 +189,26 @@ std::vector<const Tile*> Grid::findPathAStar(const Tile& start, const Tile& end)
 	assert(&end != nullptr);
 
 	// A* start.
-	queue<const Tile*> frontier;
+	auto costs = this->getInitialCosts();
+	costs[&start] = 0.0f;
+
+	auto heuristicComparer = [&](const Tile* lhs, const Tile* rhs)
+	{
+		float lhsPriority = costs[lhs] + getManhattanDistance(*lhs, end);
+		float rhsPriority = costs[rhs] + getManhattanDistance(*rhs, end);
+
+		return lhsPriority > rhsPriority;
+	};
+
+	auto frontier = priority_queue<const Tile*, vector<const Tile*>, decltype(heuristicComparer)>(heuristicComparer);
 	frontier.push(&start);
 
-	unordered_map<const Tile*, const Tile*> visited;
+	auto visited = unordered_map<const Tile*, const Tile*>();
 	visited.insert(make_pair(&start, nullptr));
-
-	unordered_map<const Tile*, float> costs = this->getInitialCosts();
-	costs[&start] = 0.0f;
 
 	while (!frontier.empty())
 	{
-		const Tile* current = frontier.front();
+		const Tile* current = frontier.top();
 		frontier.pop();
 
 		if (*current == end)
@@ -205,27 +216,9 @@ std::vector<const Tile*> Grid::findPathAStar(const Tile& start, const Tile& end)
 			break;
 		}
 
-		auto heuristicComparer = [&](const Tile* left, const Tile* right) 
+		vector<const Tile*> neighbors = this->getTileNeighbors(*current);
+		for (auto& tile : neighbors)
 		{
-			float leftHeuristic = left->getWeight() + getManhattanDistance(*left, end);
-			float rightHeuristic = right->getWeight() + getManhattanDistance(*right, end);
-
-			return leftHeuristic > rightHeuristic;
-		};
-
-		auto prioritizedNeighbors = priority_queue<const Tile*, vector<const Tile*>, decltype(heuristicComparer)>(heuristicComparer);
-		auto neighbors = this->getTileNeighbors(*current);
-
-		for (auto& item : neighbors)
-		{
-			prioritizedNeighbors.push(item);
-		}
-
-		while (!prioritizedNeighbors.empty())
-		{
-			const Tile* tile = prioritizedNeighbors.top();
-			prioritizedNeighbors.pop();
-
 			float currentCost = costs[tile];
 			float newCost = costs[current] + tile->getWeight();
 
@@ -259,45 +252,49 @@ std::unordered_map<const Tile*, float> Grid::dijkstraAlgorithm(const Tile& start
 {
 	assert(&start != nullptr);
 
-	queue<const Tile*> frontier;
+	// Dijkstra start.
+	auto costs = this->getInitialCosts();
+	costs[&start] = 0.0f;
+
+	auto heuristicComparer = [&](const Tile* lhs, const Tile* rhs)
+	{
+		float lhsPriority = costs[lhs];
+		float rhsPriority = costs[rhs];
+
+		return lhsPriority > rhsPriority;
+	};
+
+	auto frontier = priority_queue<const Tile*, vector<const Tile*>, decltype(heuristicComparer)>(heuristicComparer);
 	frontier.push(&start);
 
-	unordered_set<const Tile*> visited;
-	visited.insert(&start);
-
-	unordered_map<const Tile*, float> costs = this->getInitialCosts();
-	costs[&start] = 0.0f;
+	auto visited = unordered_map<const Tile*, const Tile*>();
+	visited.insert(make_pair(&start, nullptr));
 
 	while (!frontier.empty())
 	{
-		const Tile* current = frontier.front();
+		const Tile* current = frontier.top();
 		frontier.pop();
 
 		vector<const Tile*> neighbors = this->getTileNeighbors(*current);
-		priority_queue<const Tile*> prioritizedNeighbors = priority_queue<const Tile*>(neighbors.cbegin(), neighbors.cend());
-
-		while (!prioritizedNeighbors.empty())
+		for (auto& tile : neighbors)
 		{
-			const Tile* tile = prioritizedNeighbors.top();
-			prioritizedNeighbors.pop();
-
-			float oldCost = costs[tile];
+			float currentCost = costs[tile];
 			float newCost = costs[current] + tile->getWeight();
 
-			if (newCost < oldCost)
+			bool isVisited = visited.count(tile) > 0;
+
+			if (newCost < currentCost)
 			{
 				costs[tile] = newCost;
 			}
 
-			bool isVisited = visited.count(tile) > 0;
-
 			if (!isVisited)
 			{
 				frontier.push(tile);
-				visited.insert(tile);
+				visited.insert(make_pair(tile, current));
 			}
 		}
-	}
+	} // Dijkstra end.
 
 	return costs;
 }
