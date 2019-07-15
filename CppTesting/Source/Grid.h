@@ -15,6 +15,8 @@ public:
 
 	vector<Tile>& operator[](const int index);
 
+	const vector<Tile>& operator[](const int index) const;
+
 	int getRows() const;
 
 	int getColumns() const;
@@ -31,7 +33,7 @@ public:
 	/** Finds the cheapest path from Start to End if it exists. Uses A*. */
 	vector<const Tile*> findPathAStar(const Tile& start, const Tile& end) const;
 
-	unordered_map<const Tile*, float> dijkstraAlgorithm(const Tile& start);
+	unordered_map<const Tile*, float> dijkstraAlgorithm(const Tile& start) const;
 
 	string toString() const;
 

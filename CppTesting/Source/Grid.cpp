@@ -28,6 +28,11 @@ vector<Tile>& Grid::operator[](const int index)
 	return this->grid[index];
 }
 
+const vector<Tile>& Grid::operator[](const int index) const
+{
+	return this->grid[index];
+}
+
 int Grid::getRows() const
 {
 	return this->rows;
@@ -248,7 +253,7 @@ std::vector<const Tile*> Grid::findPathAStar(const Tile& start, const Tile& end)
 	return path;
 }
 
-std::unordered_map<const Tile*, float> Grid::dijkstraAlgorithm(const Tile& start)
+std::unordered_map<const Tile*, float> Grid::dijkstraAlgorithm(const Tile& start) const
 {
 	assert(&start != nullptr);
 

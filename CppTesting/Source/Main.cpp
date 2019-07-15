@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void PrintDijkstraAlgorithm(Grid& grid)
+void PrintDijkstraAlgorithm(const Grid& grid)
 {
 	auto costs = grid.dijkstraAlgorithm(grid[2][2]);
 
@@ -20,7 +20,7 @@ void PrintDijkstraAlgorithm(Grid& grid)
 	}
 }
 
-void PrintPathBFS(Grid& grid, Tile& start, Tile& end)
+void PrintPathBFS(const Grid& grid, const Tile& start, const Tile& end)
 {
 	auto shortestPath = grid.findPathBFS(start, end);
 
@@ -33,7 +33,7 @@ void PrintPathBFS(Grid& grid, Tile& start, Tile& end)
 	cout << endl;
 }
 
-void PrintPathDijkstra(Grid& grid, Tile& start, Tile& end)
+void PrintPathDijkstra(const Grid& grid, const Tile& start, const Tile& end)
 {
 	auto cheapestPath = grid.findPathUCS(start, end);
 
@@ -46,7 +46,7 @@ void PrintPathDijkstra(Grid& grid, Tile& start, Tile& end)
 	cout << endl;
 }
 
-void PrintPathAStar(Grid& grid, Tile& start, Tile& end)
+void PrintPathAStar(const Grid& grid, const Tile& start, const Tile& end)
 {
 	auto cheapestPath = grid.findPathAStar(start, end);
 
