@@ -71,15 +71,4 @@ namespace std
 			return tileHash;
 		}
 	};
-
-	template<>
-	struct hash<const Tile*>
-	{
-		size_t operator()(const Tile* tile) const
-		{
-			size_t tileHash = hash<Tile>()(*tile);
-
-			return tileHash;
-		}
-	};
 }
