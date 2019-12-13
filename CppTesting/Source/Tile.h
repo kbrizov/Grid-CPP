@@ -1,19 +1,18 @@
 #pragma once
 
+#include <cassert>
 #include <functional>
 #include <string>
-
-using namespace std;
 
 class Tile
 {
 public:
 
-	Tile(int row = 0, int column = 0, float weight = 1.0f);
+	Tile(unsigned row = 0, unsigned column = 0, float weight = 1.0f);
 
-	int getRow() const;
+	unsigned getRow() const;
 
-	int getColumn() const;
+	unsigned getColumn() const;
 
 	float getWeight() const;
 
@@ -25,26 +24,49 @@ public:
 
 	bool operator==(const Tile& other) const;
 
-	string toString() const;
+	bool operator!=(const Tile& other) const;
+
+	std::string toString() const;
 
 private:
-	
-	int row;
-	int column;
-	float weight;
+
+	unsigned m_row;
+	unsigned m_column;
+	float m_weight;
 };
+
+inline unsigned Tile::getRow() const
+{
+	return m_row;
+}
+
+inline unsigned Tile::getColumn() const
+{
+	return m_column;
+}
+
+inline float Tile::getWeight() const
+{
+	return m_weight;
+}
+
+inline void Tile::setWeight(float weight)
+{
+	assert(0.0f < weight);
+	m_weight = weight;
+}
 
 namespace std
 {
 	template<>
 	struct hash<Tile>
 	{
-		std::size_t operator()(const Tile& tile) const
+		size_t operator()(const Tile& tile) const
 		{
-			int rowHash = hash<int>()(tile.getRow());
-			int columnHash = hash<int>()(tile.getColumn());
+			size_t rowHash = hash<size_t>()(tile.getRow());
+			size_t columnHash = hash<size_t>()(tile.getColumn());
 
-			size_t tileHash = hash<int>()((rowHash << 1) ^ (columnHash >> 1));
+			size_t tileHash = hash<size_t>()((rowHash << 1) ^ (columnHash >> 1));
 
 			return tileHash;
 		}
@@ -53,12 +75,9 @@ namespace std
 	template<>
 	struct hash<const Tile*>
 	{
-		std::size_t operator()(const Tile* tile) const
+		size_t operator()(const Tile* tile) const
 		{
-			int rowHash = hash<int>()(tile->getRow());
-			int columnHash = hash<int>()(tile->getColumn());
-
-			size_t tileHash = hash<int>()((rowHash << 1) ^ (columnHash >> 1));
+			size_t tileHash = hash<Tile>()(*tile);
 
 			return tileHash;
 		}

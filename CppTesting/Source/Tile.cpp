@@ -1,65 +1,51 @@
 #include "Tile.h"
+#include <cmath>
 
-Tile::Tile(int row, int column, float weight)
+Tile::Tile(unsigned row, unsigned column, float weight) :
+	m_row(row),
+	m_column(column)
 {
-	this->row = row;
-	this->column = column;
 	this->setWeight(weight);
-}
-
-int Tile::getRow() const
-{
-	return this->row;
-}
-
-int Tile::getColumn() const
-{
-	return this->column;
-}
-
-float Tile::getWeight() const
-{
-	return this->weight;
-}
-
-void Tile::setWeight(float weight)
-{
-	this->weight = weight;
 }
 
 bool Tile::operator<(const Tile& other) const
 {
-	bool isLesser = this->weight < other.weight;
+	bool isLesser = m_weight < other.m_weight;
 
 	return isLesser;
 }
 
 bool Tile::operator>(const Tile& other) const
 {
-	bool isGreater = this->weight > other.weight;
+	bool isGreater = m_weight > other.m_weight;
 
 	return isGreater;
 }
 
-std::string Tile::toString() const
-{
-	string result("(" + to_string(this->row) + ", " + to_string(this->column) + ")");
-
-	return result;
-}
-
 bool Tile::operator==(const Tile& other) const
 {
-	bool equalRows = this->row == other.row;
-	bool equalColumns = this->column == other.column;
-	bool equalWeight = this->weight == other.weight;
+	const bool equalRows = (m_row == other.m_row);
+	const bool equalColumns = (m_column == other.m_column);
 
-	bool areEqual = equalRows && equalColumns && equalWeight;
+	const float deltaWeight = std::fabs(m_weight - other.m_weight);
+	const bool equalWeight = (deltaWeight <= std::numeric_limits<float>::epsilon());
 
-	if (areEqual)
-	{
-		return true;
-	}
+	const bool areEqual = equalRows && equalColumns && equalWeight;
 
-	return false;
+	return areEqual;
+}
+
+bool Tile::operator!=(const Tile& other) const
+{
+	return !(*this == other);
+}
+
+std::string Tile::toString() const
+{
+	std::string row = std::to_string(m_row);
+	std::string column = std::to_string(m_column);
+
+	std::string result = std::string("(" + row + ", " + column + ")");
+
+	return result;
 }

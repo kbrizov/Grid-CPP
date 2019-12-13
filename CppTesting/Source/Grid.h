@@ -12,27 +12,27 @@ public:
 
 	Grid(unsigned rows, unsigned columns);
 
-	vector<Tile>& operator[](unsigned index);
-
-	const vector<Tile>& operator[](unsigned index) const;
-
 	unsigned getRows() const;
 
 	unsigned getColumns() const;
 
+	std::vector<Tile>& operator[](unsigned index);
+
+	const std::vector<Tile>& operator[](unsigned index) const;
+
 	/** Finds the shortest path from Start to End if it exists. Uses Breath first search. */
-	vector<const Tile*> findPathBFS(const Tile& start, const Tile& end) const;
+	std::vector<const Tile*> findPathBFS(const Tile& start, const Tile& end) const;
 
 	/** Finds a path from Start to End if it exists. Uses Depth first search. */
-	vector<const Tile*> findPathDFS(const Tile& start, const Tile& end) const;
+	std::vector<const Tile*> findPathDFS(const Tile& start, const Tile& end) const;
 
 	/** Finds the cheapest path from Start to End if it exists. Uses Uniform Cost Search (Special case for Dijkstra's algorithm).*/
-	vector<const Tile*> findPathUCS(const Tile& start, const Tile& end) const;
+	std::vector<const Tile*> findPathUCS(const Tile& start, const Tile& end) const;
 
 	/** Finds the cheapest path from Start to End if it exists. Uses A*. */
-	vector<const Tile*> findPathAStar(const Tile& start, const Tile& end) const;
+	std::vector<const Tile*> findPathAStar(const Tile& start, const Tile& end) const;
 
-	unordered_map<const Tile*, float> dijkstraAlgorithm(const Tile& start) const;
+	std::unordered_map<const Tile*, float> dijkstraAlgorithm(const Tile& start) const;
 
 	std::string toString() const;
 
@@ -42,15 +42,15 @@ private:
 
 	void setColumns(unsigned columns);
 
-	vector<const Tile*> getPathTo(const Tile& end, const unordered_map<const Tile*, const Tile*>& visited) const;
+	std::vector<const Tile*> getPathTo(const Tile& end, const std::unordered_map<const Tile*, const Tile*>& visited) const;
 
-	vector<const Tile*> getTileNeighbors(const Tile& tile) const;
+	std::vector<const Tile*> getTileNeighbors(const Tile& tile) const;
 
-	vector<const Tile*> getTileNeighbors(unsigned row, unsigned column) const;
+	std::vector<const Tile*> getTileNeighbors(unsigned row, unsigned column) const;
 
 	float getManhattanDistance(const Tile& a, const Tile& b) const;
 
-	unordered_map<const Tile*, float> getInitialCosts() const;
+	std::unordered_map<const Tile*, float> getInitialCosts() const;
 
 	bool canGetTile(unsigned row, unsigned column) const;
 
@@ -62,7 +62,7 @@ private:
 
 	unsigned m_rows;
 	unsigned m_columns;
-	vector<vector<Tile>> m_grid;
+	std::vector<std::vector<Tile>> m_grid;
 };
 
 inline unsigned Grid::getRows() const
@@ -72,8 +72,7 @@ inline unsigned Grid::getRows() const
 
 inline void Grid::setRows(unsigned rows)
 {
-	assert(rows > 0);
-
+	assert(0 < rows);
 	m_rows = rows;
 }
 
@@ -84,8 +83,7 @@ inline unsigned Grid::getColumns() const
 
 inline void Grid::setColumns(unsigned columns)
 {
-	assert(columns > 0);
-
+	assert(0 < columns);
 	m_columns = columns;
 }
 
