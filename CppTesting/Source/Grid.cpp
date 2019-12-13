@@ -5,49 +5,36 @@
 #include <unordered_set>
 #include <algorithm>
 
-Grid::Grid(int rows, int columns)
+Grid::Grid(unsigned rows, unsigned columns)
 {
 	this->setRows(rows);
 	this->setColumns(columns);
 
-	this->grid = vector<vector<Tile>>(rows);
+	m_grid = vector<vector<Tile>>(rows);
 
-	for (int row = 0; row < rows; row++)
+	for (unsigned row = 0; row < rows; row++)
 	{
-		this->grid[row] = vector<Tile>(columns);
+		m_grid[row] = vector<Tile>(columns);
 
-		for (int column = 0; column < columns; column++)
+		for (unsigned column = 0; column < columns; column++)
 		{
-			grid[row][column] = Tile(row, column);
+			m_grid[row][column] = Tile(row, column);
 		}
 	}
 }
 
-vector<Tile>& Grid::operator[](const int index)
+vector<Tile>& Grid::operator[](unsigned index)
 {
-	return this->grid[index];
+	return m_grid[index];
 }
 
-const vector<Tile>& Grid::operator[](const int index) const
+const vector<Tile>& Grid::operator[](unsigned index) const
 {
-	return this->grid[index];
-}
-
-int Grid::getRows() const
-{
-	return this->rows;
-}
-
-int Grid::getColumns() const
-{
-	return this->columns;
+	return m_grid[index];
 }
 
 std::vector<const Tile*> Grid::findPathBFS(const Tile& start, const Tile& end) const
 {
-	assert(&start != nullptr);
-	assert(&end != nullptr);
-
 	// BFS start.
 	queue<const Tile*> frontier;
 	frontier.push(&start);
@@ -66,9 +53,10 @@ std::vector<const Tile*> Grid::findPathBFS(const Tile& start, const Tile& end) c
 		}
 
 		vector<const Tile*> neighbors = this->getTileNeighbors(*current);
+
 		for (const auto& tile : neighbors)
 		{
-			bool isContained = visited.count(tile) > 0;
+			const bool isContained = visited.count(tile) > 0;
 
 			if (!isContained)
 			{
@@ -85,9 +73,6 @@ std::vector<const Tile*> Grid::findPathBFS(const Tile& start, const Tile& end) c
 
 std::vector<const Tile*> Grid::findPathDFS(const Tile& start, const Tile& end) const
 {
-	assert(&start != nullptr);
-	assert(&end != nullptr);
-
 	// DFS start.
 	stack<const Tile*> frontier;
 	frontier.push(&start);
@@ -106,9 +91,10 @@ std::vector<const Tile*> Grid::findPathDFS(const Tile& start, const Tile& end) c
 		}
 
 		vector<const Tile*> neighbors = this->getTileNeighbors(*current);
+
 		for (const auto& tile : neighbors)
 		{
-			bool isContained = visited.count(tile) > 0;
+			const bool isContained = visited.count(tile) > 0;
 
 			if (!isContained)
 			{
@@ -125,17 +111,14 @@ std::vector<const Tile*> Grid::findPathDFS(const Tile& start, const Tile& end) c
 
 std::vector<const Tile*> Grid::findPathUCS(const Tile& start, const Tile& end) const
 {
-	assert(&start != nullptr);
-	assert(&end != nullptr);
-
 	// UCS start.
 	auto costs = this->getInitialCosts();
 	costs[&start] = 0.0f;
 
 	auto heuristicComparer = [&](const Tile* lhs, const Tile* rhs)
 	{
-		float lhsPriority = costs[lhs];
-		float rhsPriority = costs[rhs];
+		const float lhsPriority = costs[lhs];
+		const float rhsPriority = costs[rhs];
 
 		return lhsPriority > rhsPriority;
 	};
@@ -157,12 +140,13 @@ std::vector<const Tile*> Grid::findPathUCS(const Tile& start, const Tile& end) c
 		}
 
 		vector<const Tile*> neighbors = this->getTileNeighbors(*current);
-		for (auto& tile : neighbors)
-		{
-			float currentCost = costs[tile];
-			float newCost = costs[current] + tile->getWeight();
 
-			bool isVisited = visited.count(tile) > 0;
+		for (const auto& tile : neighbors)
+		{
+			const float currentCost = costs[tile];
+			const float newCost = costs[current] + tile->getWeight();
+
+			const bool isVisited = visited.count(tile) > 0;
 
 			if (newCost < currentCost)
 			{
@@ -190,17 +174,14 @@ std::vector<const Tile*> Grid::findPathUCS(const Tile& start, const Tile& end) c
 
 std::vector<const Tile*> Grid::findPathAStar(const Tile& start, const Tile& end) const
 {
-	assert(&start != nullptr);
-	assert(&end != nullptr);
-
 	// A* start.
 	auto costs = this->getInitialCosts();
 	costs[&start] = 0.0f;
 
 	auto heuristicComparer = [&](const Tile* lhs, const Tile* rhs)
 	{
-		float lhsPriority = costs[lhs] + getManhattanDistance(*lhs, end);
-		float rhsPriority = costs[rhs] + getManhattanDistance(*rhs, end);
+		const float lhsPriority = costs[lhs] + getManhattanDistance(*lhs, end);
+		const float rhsPriority = costs[rhs] + getManhattanDistance(*rhs, end);
 
 		return lhsPriority > rhsPriority;
 	};
@@ -222,12 +203,13 @@ std::vector<const Tile*> Grid::findPathAStar(const Tile& start, const Tile& end)
 		}
 
 		vector<const Tile*> neighbors = this->getTileNeighbors(*current);
-		for (auto& tile : neighbors)
-		{
-			float currentCost = costs[tile];
-			float newCost = costs[current] + tile->getWeight();
 
-			bool isVisited = visited.count(tile) > 0;
+		for (const auto& tile : neighbors)
+		{
+			const float currentCost = costs[tile];
+			const float newCost = costs[current] + tile->getWeight();
+
+			const bool isVisited = visited.count(tile) > 0;
 
 			if (newCost < currentCost)
 			{
@@ -255,16 +237,14 @@ std::vector<const Tile*> Grid::findPathAStar(const Tile& start, const Tile& end)
 
 std::unordered_map<const Tile*, float> Grid::dijkstraAlgorithm(const Tile& start) const
 {
-	assert(&start != nullptr);
-
 	// Dijkstra start.
 	auto costs = this->getInitialCosts();
 	costs[&start] = 0.0f;
 
 	auto heuristicComparer = [&](const Tile* lhs, const Tile* rhs)
 	{
-		float lhsPriority = costs[lhs];
-		float rhsPriority = costs[rhs];
+		const float lhsPriority = costs[lhs];
+		const float rhsPriority = costs[rhs];
 
 		return lhsPriority > rhsPriority;
 	};
@@ -281,17 +261,18 @@ std::unordered_map<const Tile*, float> Grid::dijkstraAlgorithm(const Tile& start
 		frontier.pop();
 
 		vector<const Tile*> neighbors = this->getTileNeighbors(*current);
-		for (auto& tile : neighbors)
-		{
-			float currentCost = costs[tile];
-			float newCost = costs[current] + tile->getWeight();
 
-			bool isVisited = visited.count(tile) > 0;
+		for (const auto& tile : neighbors)
+		{
+			const float currentCost = costs[tile];
+			const float newCost = costs[current] + tile->getWeight();
 
 			if (newCost < currentCost)
 			{
 				costs[tile] = newCost;
 			}
+
+			const bool isVisited = visited.count(tile) > 0;
 
 			if (!isVisited)
 			{
@@ -306,12 +287,10 @@ std::unordered_map<const Tile*, float> Grid::dijkstraAlgorithm(const Tile& start
 
 std::vector<const Tile*> Grid::getTileNeighbors(const Tile& tile) const
 {
-	assert(&tile != nullptr);
-
 	return this->getTileNeighbors(tile.getRow(), tile.getColumn());
 }
 
-std::vector<const Tile*> Grid::getTileNeighbors(int row, int column) const
+std::vector<const Tile*> Grid::getTileNeighbors(unsigned row, unsigned column) const
 {
 	assert(isRowInRange(row));
 	assert(isColumnInRange(column));
@@ -329,49 +308,49 @@ std::vector<const Tile*> Grid::getTileNeighbors(int row, int column) const
 
 	if (canGetUpperNeighbor)
 	{
-		auto* upperNeighbor = &grid[row - 1][column];
+		const Tile* upperNeighbor = &m_grid[row - 1][column];
 		neighbors.push_back(upperNeighbor);
 	}
 
 	//if (canGetUpperRightNeighbor) //
 	//{
-	//    auto* upperRightNeighbor = &grid[row - 1][column + 1];
+	//    const Tile* upperRightNeighbor = &grid[row - 1][column + 1];
 	//    neighbors.push_back(upperRightNeighbor);
 	//}
 
 	if (canGetRightNeighbor)
 	{
-		auto* rightNeighbor = &grid[row][column + 1];
+		const Tile* rightNeighbor = &m_grid[row][column + 1];
 		neighbors.push_back(rightNeighbor);
 	}
 
 	//if (canGetLowerRightNeighbor) //
 	//{
-	//    auto* lowerRightNeighbor = &grid[row + 1][column + 1];
+	//    const Tile* lowerRightNeighbor = &grid[row + 1][column + 1];
 	//    neighbors.push_back(lowerRightNeighbor);
 	//}
 
 	if (canGetLowerNeighbor)
 	{
-		auto* lowerNeighbor = &grid[row + 1][column];
+		const Tile* lowerNeighbor = &m_grid[row + 1][column];
 		neighbors.push_back(lowerNeighbor);
 	}
 
 	//if (canGetLowerLeftNeighbor) //
 	//{
-	//    auto* lowerLeftNeighbor = &grid[row + 1][column - 1];
+	//    const Tile* lowerLeftNeighbor = &grid[row + 1][column - 1];
 	//    neighbors.push_back(lowerLeftNeighbor);
 	//}
 
 	if (canGetLeftNeighbor)
 	{
-		auto* leftNeighbor = &grid[row][column - 1];
+		const Tile* leftNeighbor = &m_grid[row][column - 1];
 		neighbors.push_back(leftNeighbor);
 	}
 
 	//if (canGetUpperLeftNeighbor) //
 	//{
-	//    auto* upperLeftNeighbor = &grid[row - 1][column - 1];
+	//    const Tile* upperLeftNeighbor = &grid[row - 1][column - 1];
 	//    neighbors.push_back(upperLeftNeighbor);
 	//}
 
@@ -380,16 +359,13 @@ std::vector<const Tile*> Grid::getTileNeighbors(int row, int column) const
 
 float Grid::getManhattanDistance(const Tile& a, const Tile& b) const
 {
-	assert(&a != nullptr);
-	assert(&b != nullptr);
+	const float aRow = static_cast<float>(a.getRow());
+	const float aColomn = static_cast<float>(a.getColumn());
 
-	float aRow = static_cast<float>(a.getRow());
-	float aColomn = static_cast<float>(a.getColumn());
+	const float bRow = static_cast<float>(b.getRow());
+	const float bColumn = static_cast<float>(b.getColumn());
 
-	float bRow = static_cast<float>(b.getRow());
-	float bColumn = static_cast<float>(b.getColumn());
-
-	float manhattanDistance = fabs(aRow - bRow) + fabs(aColomn - bColumn);
+	const float manhattanDistance = fabs(aRow - bRow) + fabs(aColomn - bColumn);
 
 	return manhattanDistance;
 }
@@ -398,11 +374,11 @@ std::string Grid::toString() const
 {
 	string result;
 
-	for (int row = 0; row < this->getRows(); row++)
+	for (unsigned row = 0; row < m_rows; row++)
 	{
-		for (int column = 0; column < this->getColumns(); column++)
+		for (unsigned column = 0; column < m_columns; column++)
 		{
-			result.append(grid[row][column].toString() + " ");
+			result.append(m_grid[row][column].toString() + " ");
 		}
 
 		result.push_back('\n');
@@ -411,23 +387,8 @@ std::string Grid::toString() const
 	return result;
 }
 
-void Grid::setRows(int rows)
-{
-	assert(rows > 0);
-
-	this->rows = rows;
-}
-
-void Grid::setColumns(int columns)
-{
-	assert(columns > 0);
-
-	this->columns = columns;
-}
-
 std::vector<const Tile*> Grid::getPathTo(const Tile& end, const unordered_map<const Tile*, const Tile*>& visited) const
 {
-	assert(&end != nullptr);
 	assert(visited.size() > 0);
 
 	vector<const Tile*> path;
@@ -435,7 +396,7 @@ std::vector<const Tile*> Grid::getPathTo(const Tile& end, const unordered_map<co
 	const Tile* current = nullptr;
 	const Tile* previous = nullptr;
 
-	bool isContained = visited.count(&end) > 0;
+	const bool isContained = visited.count(&end) > 0;
 
 	if (isContained)
 	{
@@ -462,34 +423,16 @@ std::unordered_map<const Tile*, float> Grid::getInitialCosts() const
 {
 	unordered_map<const Tile*, float> costs;
 
-	for (int row = 0; row < this->rows; row++)
+	for (unsigned row = 0; row < m_rows; row++)
 	{
-		for (int column = 0; column < this->columns; column++)
+		for (unsigned column = 0; column < m_columns; column++)
 		{
-			costs.insert(make_pair(&grid[row][column], std::numeric_limits<float>::infinity()));
+			const Tile* tile = &m_grid[row][column];
+			const float cost = std::numeric_limits<float>::infinity();
+
+			costs.insert(make_pair(tile, cost));
 		}
 	}
 
 	return costs;
-}
-
-bool Grid::canGetTile(int row, int column) const
-{
-	bool isInRange = isRowInRange(row) && isColumnInRange(column);
-
-	return isInRange;
-}
-
-bool Grid::isRowInRange(int row) const
-{
-	bool isInRange = (0 <= row && row < rows);
-
-	return isInRange;
-}
-
-bool Grid::isColumnInRange(int column) const
-{
-	bool isInRange = (0 <= column && column < columns);
-
-	return isInRange;
 }

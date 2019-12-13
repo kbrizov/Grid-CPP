@@ -9,9 +9,9 @@ void PrintDijkstraAlgorithm(const Grid& grid)
 {
 	auto costs = grid.dijkstraAlgorithm(grid[2][2]);
 
-	for (int row = 0; row < grid.getRows(); row++)
+	for (unsigned row = 0; row < grid.getRows(); row++)
 	{
-		for (int column = 0; column < grid.getColumns(); column++)
+		for (unsigned column = 0; column < grid.getColumns(); column++)
 		{
 			cout << costs[&grid[row][column]] << " ";
 		}
@@ -75,9 +75,4 @@ int main()
 
 	return 0;
 }
-
-//priority_queue <Tile*> test1;
-//
-//auto tileComparer = [](Tile* left, Tile* right) { return *left > *right; };
-//priority_queue <Tile*, vector<Tile*>, decltype(tileComparer)> test2(tileComparer);
 

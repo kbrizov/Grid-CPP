@@ -3,12 +3,10 @@
   <ItemGroup>
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Grid.cpp" />
-    <ClCompile Include="Source\Matrix.cpp" />
     <ClCompile Include="Source\Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Grid.h" />
-    <ClInclude Include="Source\Matrix.h" />
     <ClInclude Include="Source\Tile.h" />
   </ItemGroup>
 </Project>
