@@ -107,6 +107,3 @@ inline bool Grid::isColumnInRange(unsigned column) const
 
 	return isInRange;
 }
-
-
-
