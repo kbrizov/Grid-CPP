@@ -367,12 +367,12 @@ std::vector<const Tile*> Grid::getTileNeighbors(unsigned row, unsigned column) c
 float Grid::getManhattanDistance(const Tile& a, const Tile& b) const
 {
 	const float aRow = static_cast<float>(a.getRow());
-	const float aColomn = static_cast<float>(a.getColumn());
+	const float aColumn = static_cast<float>(a.getColumn());
 
 	const float bRow = static_cast<float>(b.getRow());
 	const float bColumn = static_cast<float>(b.getColumn());
 
-	const float manhattanDistance = fabs(aRow - bRow) + fabs(aColomn - bColumn);
+	const float manhattanDistance = fabs(aRow - bRow) + fabs(aColumn - bColumn);
 
 	return manhattanDistance;
 }
