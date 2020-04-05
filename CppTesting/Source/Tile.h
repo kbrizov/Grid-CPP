@@ -4,29 +4,29 @@
 #include <functional>
 #include <string>
 
-class Tile
+class TILE
 {
 public:
 
-	Tile(unsigned row = 0, unsigned column = 0, float weight = 1.0f);
+	TILE(unsigned row = 0, unsigned column = 0, float weight = 1.0f);
 
-	unsigned getRow() const;
+	unsigned get_row() const;
 
-	unsigned getColumn() const;
+	unsigned get_column() const;
 
-	float getWeight() const;
+	float get_weight() const;
 
-	void setWeight(float weight);
+	void set_weight(float weight);
 
-	bool operator<(const Tile& other) const;
+	bool operator<(const TILE& other) const;
 
-	bool operator>(const Tile& other) const;
+	bool operator>(const TILE& other) const;
 
-	bool operator==(const Tile& other) const;
+	bool operator==(const TILE& other) const;
 
-	bool operator!=(const Tile& other) const;
+	bool operator!=(const TILE& other) const;
 
-	std::string toString() const;
+	std::string to_string() const;
 
 private:
 
@@ -35,22 +35,22 @@ private:
 	float m_weight;
 };
 
-inline unsigned Tile::getRow() const
+inline unsigned TILE::get_row() const
 {
 	return m_row;
 }
 
-inline unsigned Tile::getColumn() const
+inline unsigned TILE::get_column() const
 {
 	return m_column;
 }
 
-inline float Tile::getWeight() const
+inline float TILE::get_weight() const
 {
 	return m_weight;
 }
 
-inline void Tile::setWeight(float weight)
+inline void TILE::set_weight(float weight)
 {
 	assert(0.0f < weight);
 	m_weight = weight;
@@ -59,16 +59,16 @@ inline void Tile::setWeight(float weight)
 namespace std
 {
 	template<>
-	struct hash<Tile>
+	struct hash<TILE>
 	{
-		size_t operator()(const Tile& tile) const
+		size_t operator()(const TILE& tile) const
 		{
-			size_t rowHash = hash<size_t>()(tile.getRow());
-			size_t columnHash = hash<size_t>()(tile.getColumn());
+			size_t row_hash = hash<size_t>()(tile.get_row());
+			size_t column_hash = hash<size_t>()(tile.get_column());
 
-			size_t tileHash = hash<size_t>()((rowHash << 1) ^ (columnHash >> 1));
+			size_t tile_hash = hash<size_t>()((row_hash << 1) ^ (column_hash >> 1));
 
-			return tileHash;
+			return tile_hash;
 		}
 	};
 }

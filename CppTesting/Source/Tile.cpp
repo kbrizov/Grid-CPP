@@ -1,51 +1,51 @@
 #include "Tile.h"
 #include <cmath>
 
-Tile::Tile(unsigned row, unsigned column, float weight) :
+TILE::TILE(unsigned row, unsigned column, float weight) :
 	m_row(row),
 	m_column(column)
 {
-	this->setWeight(weight);
+	this->set_weight(weight);
 }
 
-bool Tile::operator<(const Tile& other) const
+bool TILE::operator<(const TILE& other) const
 {
-	bool isLesser = m_weight < other.m_weight;
+	const bool is_lesser = m_weight < other.m_weight;
 
-	return isLesser;
+	return is_lesser;
 }
 
-bool Tile::operator>(const Tile& other) const
+bool TILE::operator>(const TILE& other) const
 {
-	bool isGreater = m_weight > other.m_weight;
+	const bool is_greater = m_weight > other.m_weight;
 
-	return isGreater;
+	return is_greater;
 }
 
-bool Tile::operator==(const Tile& other) const
+bool TILE::operator==(const TILE& other) const
 {
-	const bool equalRows = (m_row == other.m_row);
-	const bool equalColumns = (m_column == other.m_column);
+	const bool equal_rows = (m_row == other.m_row);
+	const bool equal_columns = (m_column == other.m_column);
 
-	const float deltaWeight = std::fabs(m_weight - other.m_weight);
-	const bool equalWeight = (deltaWeight <= std::numeric_limits<float>::epsilon());
+	const float delta_weight = std::fabs(m_weight - other.m_weight);
+	const bool equal_weight = (delta_weight <= std::numeric_limits<float>::epsilon());
 
-	const bool areEqual = equalRows && equalColumns && equalWeight;
+	const bool are_equal = equal_rows && equal_columns && equal_weight;
 
-	return areEqual;
+	return are_equal;
 }
 
-bool Tile::operator!=(const Tile& other) const
+bool TILE::operator!=(const TILE& other) const
 {
 	return !(*this == other);
 }
 
-std::string Tile::toString() const
+std::string TILE::to_string() const
 {
-	std::string row = std::to_string(m_row);
-	std::string column = std::to_string(m_column);
-
-	std::string result = std::string("(" + row + ", " + column + ")");
+	const std::string row = std::to_string(m_row);
+	const std::string column = std::to_string(m_column);
+	
+	const std::string result = std::string("(" + row + ", " + column + ")");
 
 	return result;
 }
